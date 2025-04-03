@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block title %}
+	adminLogin - Flask-O-shop
+{% endblock %}
+
+{% block content %}
+	<h3 class="text-center"> Admin Login </h3>
+	<div class="container">
+        <form method="POST">
+            <div class="mb-3">
+                <label for="admin_id" class="form-label">Admin ID</label>
+                <input type="text" class="form-control" id="admin_id" name="admin_id" required>
+            </div>
+            <div class="mb-3">
+                <label for="password" class="form-label">Password</label>
+                <input type="password" class="form-control" id="password" name="password" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Login</button>
+        </form>
+        
+        {% if error %}
+            <div class="alert alert-danger mt-3">{{ error }}</div>
+        {% endif %}
+    </div>
+{% endblock %}

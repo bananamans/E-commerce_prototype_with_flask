@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Give Rating - Flask-O-shop
+{% endblock %}
+
+{% block content %}
+    <h2>Rate your order</h2>
+    <p>Order ID: {{ order.id }}</p>
+    <p>Ordered items:</p>
+
+    {% if already_rated %}
+        <p class="alert alert-info">You have already given rating for this order.</p>
+    {% else %}
+        <form method="POST">
+            <ul>
+                {% for ordered_item in order.items %}
+                    <li>
+                        {{ ordered_item.item.name }}
+                        <br>
+                        <label for="rating_{{ ordered_item.id }}">Rating (1 to 5):</label>
+                        <input type="number" id="rating_{{ ordered_item.id }}" name="rating_{{ ordered_item.id }}" min="1" max="5" required>
+                    </li>
+                {% endfor %}
+            </ul>
+            <button type="submit" class="btn btn-primary">Submit Ratings</button>
+        </form>
+    {% endif %}
+{% endblock %}

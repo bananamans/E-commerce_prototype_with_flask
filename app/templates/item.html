@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block title %}
+	{{ item.name }} - Flask-O-shop
+{% endblock %}
+
+{% block content %}
+	{% with msgs =  get_flashed_messages(with_categories=True) %}
+	{% for c, msg in msgs %}
+		{% if c == 'error' %}
+			<div class="flash-error">
+		{% else %}
+			<div class="success">
+		{% endif %}
+			{{ msg | safe}}</div><br>
+	{% endfor %}
+	{% endwith %}
+
+			<div class="item-display">
+				<div class="img-wrapper">
+					<img src="{{ item.image }}" class="pic">
+				</div>
+				<b>{{ item.name }}</b>
+				<span class="right-item">${{ item.price }}</span><br>
+                {% set avg_rating = (item.total_rating / item.num_rating) if item.num_rating > 0 else 0 %}
+				{% set full_stars = avg_rating | int %}
+				{% set half_star = 1 if avg_rating - full_stars >= 0.5 else 0 %}
+				{% set empty_stars = 5 - full_stars - half_star %}
+
+				{% for _ in range(full_stars) %}
+    				<i class="fa fa-star checked"></i>
+				{% endfor %}
+
+				{% if half_star %}
+    				<i class="fa fa-star-half checked"></i>
+				{% endif %}
+
+				{% for _ in range(empty_stars) %}
+    				<i class="fa fa-regular fa-star" style="color: lightgrey;"></i>
+				{% endfor %}
+
+                <span class="text-muted">({{ avg_rating | round(1) }})</span>
+                <div class="details">{{ item.details | safe }}</div>
+
+                <form action="{{ url_for('add_to_cart', id=item.id) }}" method="POST">
+                    Quantity: 
+                    <input type="number" value="1" name="quantity" min="1" max="50" onkeyup="if(this.value > 50) this.value=50;" required>
+                    <br><br>
+					<input type="submit" class="add-to-cart" value="Add to Cart" name="add">
+                </form>
+				</a>
+			</div>
+
+{% endblock %}
