@@ -1,4 +1,3 @@
-import os, json
 from datetime import datetime, timezone, timedelta
 from flask import Flask, render_template, redirect, url_for, flash, request, abort
 from flask_bootstrap import Bootstrap
@@ -6,12 +5,11 @@ from .forms import LoginForm, RegisterForm
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import LoginManager, login_user, current_user, login_required, logout_user
 from .db_models import db, User, Item, Cart, Order, Ordered_item
-# from .funcs import mail, fulfill_order
 from dotenv import load_dotenv
 import tensorflow as tf
 from .admin.routes import admin
 from recommenders.models.ncf.ncf_singlenode import NCF
-from sklearn.metrics.pairwise import linear_kernel, cosine_similarity
+from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.feature_extraction.text import TfidfVectorizer
 import pandas as pd
 from collections import OrderedDict
@@ -32,7 +30,6 @@ app.config['MAIL_PORT'] = 587
 
 Bootstrap(app)
 db.init_app(app)
-# mail.init_app(app)
 login_manager = LoginManager()
 login_manager.init_app(app)
 
@@ -106,7 +103,11 @@ def recommend(user_id, all_items):
 
     predictions = [(item, ncfmodel.predict(user_id, item.id)) for item in cbf_filtered_items]
     sorted_recommendations = [item for item, _ in sorted(predictions, key=lambda x: x[1], reverse=True)]
-    print(sorted_recommendations)
+    
+    sorted_predictions = sorted(predictions, key=lambda x: x[1], reverse=True)
+    for i, (item, score) in enumerate(sorted_predictions, start=1):
+        print(f"{i}. {item.name} (ID: {item.id}) — Predicted Rating: {score:.4f}")
+	
     return sorted_recommendations
 
 def create_item_to_id_mapping():
@@ -180,37 +181,11 @@ def register():
 		return redirect(url_for('login'))
 	return render_template("register.html", form=form)
 
-# @app.route('/confirm/<token>')
-# def confirm_email(token):
-# 	try:
-# 		confirm_serializer = URLSafeTimedSerializer(app.config['SECRET_KEY'])
-# 		email = confirm_serializer.loads(token, salt='email-confirmation-salt', max_age=3600)
-# 	except:
-# 		flash('The confirmation link is invalid or has expired.', 'error')
-# 		return redirect(url_for('login'))
-# 	user = User.query.filter_by(email=email).first()
-# 	if user.email_confirmed:
-# 		flash(f'Account already confirmed. Please login.', 'success')
-# 	else:
-# 		user.email_confirmed = True
-# 		db.session.add(user)
-# 		db.session.commit()
-# 		flash('Email address successfully confirmed!', 'success')
-# 	return redirect(url_for('login'))
-
 @app.route("/logout")
 @login_required
 def logout():
 	logout_user()
 	return redirect(url_for('login'))
-
-# @app.route("/resend")
-# @login_required
-# def resend():
-# 	send_confirmation_email(current_user.email)
-# 	logout_user()
-# 	flash('Confirmation email sent successfully.', 'success')
-# 	return redirect(url_for('login'))
 
 @app.route('/admin_login', methods=['GET', 'POST'])
 def admin_login():
@@ -275,9 +250,6 @@ def give_rating(order_id, user_id):
         for ordered_item in order.items:
             rating_key = f"rating_{ordered_item.id}"
             rating = request.form.get(rating_key)
-            if not rating | rating > 5 | rating < 1:
-                flash(f"Please provide a suitable rating.", 'danger')
-                return render_template('give_rating.html', order=order, already_rated=False)
 			
         # Loop through each ordered item and update the ratings
         for ordered_item in order.items:
@@ -367,50 +339,3 @@ def checkout():
 	db.session.commit()
 	
 	return redirect(url_for('home'))
-
-	# try:
-	# 	checkout_session = stripe.checkout.Session.create(
-	# 		client_reference_id=current_user.id,
-	# 		line_items=data,
-	# 		payment_method_types=[
-	# 		  'card',
-	# 		],
-	# 		mode='payment',
-	# 		success_url=url_for('payment_success', _external=True),
-	# 		cancel_url=url_for('payment_failure', _external=True),
-	# 	)
-	# except Exception as e:
-	# 	return str(e)
-	# return redirect(checkout_session.url, code=303)
-
-# @app.route('/stripe-webhook', methods=['POST'])
-# def stripe_webhook():
-
-# 	if request.content_length > 1024*1024:
-# 		print("Request too big!")
-# 		abort(400)
-
-# 	payload = request.get_data()
-# 	sig_header = request.environ.get('HTTP_STRIPE_SIGNATURE')
-# 	ENDPOINT_SECRET = os.environ.get('ENDPOINT_SECRET')
-# 	event = None
-
-# 	try:
-# 		event = stripe.Webhook.construct_event(
-# 		payload, sig_header, ENDPOINT_SECRET
-# 		)
-# 	except ValueError as e:
-# 		# Invalid payload
-# 		return {}, 400
-# 	except stripe.error.SignatureVerificationError as e:
-# 		# Invalid signature
-# 		return {}, 400
-
-# 	if event['type'] == 'checkout.session.completed':
-# 		session = event['data']['object']
-
-# 		# Fulfill the purchase...
-# 		fulfill_order(session)
-
-# 	# Passed signature verification
-# 	return {}, 200

@@ -1,30 +1,10 @@
-import os, datetime
-from flask import render_template, url_for
-from itsdangerous import URLSafeTimedSerializer
+import datetime
 from flask_login import current_user
 from dotenv import load_dotenv
 from .db_models import Order, Ordered_item, db, User
 
 
 load_dotenv()
-# mail = Mail()
-
-# def send_confirmation_email(user_email) -> None:
-# 	""" sends confirmation email """
-# 	confirm_serializer = URLSafeTimedSerializer(os.environ["SECRET_KEY"])
-# 	confirm_url = url_for(
-# 						'confirm_email',
-# 						token=confirm_serializer.dumps(user_email,
-# 						salt='email-confirmation-salt'),
-# 						_external=True)
-# 	html = render_template('email_confirmation.html', confirm_url=confirm_url)
-# 	msg = Message(
-# 		'Confirm Your Email Address',
-# 		recipients=[user_email],
-# 		sender=("Flask-O-shop Email Confirmation", os.environ["EMAIL"]),
-# 		html=html,
-# 	)
-# 	mail.send(msg)
 
 def fulfill_order(session):
 	""" Fulfils order on successful payment """
@@ -41,14 +21,4 @@ def fulfill_order(session):
 		db.session.commit()
 		current_user.remove_from_cart(cart.item.id, cart.quantity)
 		db.session.commit()
-
-def admin_only(func):
-	""" Decorator for giving access to authorized users only """
-	def wrapper(*args, **kwargs):
-		if current_user.is_authenticated and current_user.admin == 1:
-			return func(*args, **kwargs)
-		else:
-			return "You are not Authorized to access this URL."
-	wrapper.__name__ = func.__name__
-	return wrapper
 		

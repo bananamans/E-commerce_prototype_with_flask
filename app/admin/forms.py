@@ -17,7 +17,6 @@ class EditItemForm(FlaskForm):
 	price = FloatField("Price:", validators=[DataRequired()])
 	category = StringField("Category:", validators=[DataRequired(), Length(max=50)])
 	brand = StringField("Brand:", validators=[DataRequired(), Length(max=50)])
-	# image = FileField("Image:", validators=[DataRequired()])
 	details = StringField("Details:", validators=[DataRequired()])
 	submit = SubmitField("Confirm")
 

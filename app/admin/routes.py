@@ -4,7 +4,6 @@ from ..db_models import Order, Ordered_item, Item, db
 from ..admin.forms import AddItemForm, EditItemForm, OrderEditForm
 from ..funcs import admin_only
 
-
 admin = Blueprint("admin", __name__, url_prefix="/admin", static_folder="static", template_folder="templates")
 
 @admin.route('/')
@@ -52,7 +51,6 @@ def edit(type, id):
             category = item.category,
             brand = item.brand,
             details = item.details,
-            # image = item.image,
         )
         if form.validate_on_submit():
             item.name = form.name.data
@@ -60,9 +58,6 @@ def edit(type, id):
             item.category = form.category.data
             item.brand = form.brand.data
             item.details = form.details.data
-            # if form.image.data:
-            #     form.image.data.save('app/static/uploads/' + form.image.data.filename)
-            #     item.image = url_for('static', filename=f'uploads/{form.image.data.filename}')
             db.session.commit()
             return redirect(url_for('admin.items'))
     elif type == "order":
