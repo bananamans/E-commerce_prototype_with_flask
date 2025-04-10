@@ -2,7 +2,7 @@ from flask import Blueprint, render_template, url_for, flash
 from werkzeug.utils import redirect
 from ..db_models import Order, Ordered_item, Item, db
 from ..admin.forms import AddItemForm, EditItemForm, OrderEditForm
-from ..funcs import admin_only
+# from ..funcs import admin_only
 
 admin = Blueprint("admin", __name__, url_prefix="/admin", static_folder="static", template_folder="templates")
 
