@@ -6,7 +6,6 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import LoginManager, login_user, current_user, login_required, logout_user
 from .db_models import db, User, Item, Cart, Order, Ordered_item
 from dotenv import load_dotenv
-import tensorflow as tf
 from .admin.routes import admin
 from recommenders.models.ncf.ncf_singlenode import NCF
 from sklearn.metrics.pairwise import cosine_similarity
