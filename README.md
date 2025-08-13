@@ -26,4 +26,5 @@ pip install -r requirements.txt
 
 # Live Project
 https://e-commerce-prototype-with-flask.onrender.com
+
 Note: When running the application for the first time, it may take some time as it creates necessary files and initializes the environment.
