@@ -12,7 +12,9 @@ An E-Commerce app built with Python Flask and deep learning recommendation model
 # Sample Application Screenshots
 
 <img width="1813" height="907" alt="pic1" src="https://github.com/user-attachments/assets/8732bf6e-b890-4bef-8d5f-21b25cafbb97" />
+
 <img width="1751" height="808" alt="pic2" src="https://github.com/user-attachments/assets/ab177ab8-4459-4f3a-8e6b-b81c47c19ad5" />
+
 <img width="1757" height="891" alt="pic3" src="https://github.com/user-attachments/assets/a770d978-48b2-4de2-978b-83cc4e62c289" />
 
 
